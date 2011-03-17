@@ -12,7 +12,7 @@ Rails will return HTML 500 errors when you send it badly formatted XML or JSON o
 
 Add rack_respond_to_malformed_formats to your Gemfile
 
-  gem 'rack_respond_to_malformed_formats'
+  gem 'rack_respond_to_malformed_formats', :require => 'rack/respond_to_malformed_formats'
 
 Then run:
 
