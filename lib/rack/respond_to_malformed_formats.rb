@@ -11,10 +11,11 @@ module Rack
       @app = app
     end
 
-      def call(env)
+    def call(env)
       if malformed_response = respond_to_malformed_parameters(env)
         input = env["rack.input"]
         input.rewind
+        logger = env["rack.logger"]
         logger.error "Error occurred while parsing request.\nInput:\n\n#{input.read}" if logger
         malformed_response
       else
@@ -29,11 +30,11 @@ module Rack
 
       case (env["HTTP_X_POST_DATA_FORMAT"] || request.content_type).to_s.downcase
       when /xml/
-        parse_xml(request.body.read)
+        parse_xml(request.body.read).tap { request.body.rewind }
       when /yaml/
-        parse_yaml(request.body.read)
+        parse_yaml(request.body.read).tap { request.body.rewind }
       when /json/
-        parse_json(request.body.read)
+        parse_json(request.body.read).tap { request.body.rewind }
       else
         false
       end
@@ -62,10 +63,6 @@ module Rack
       false
     rescue ArgumentError => e
       [400, {"Content-Type"=> "application/x-yaml"}, [e.to_s]]
-    end
-
-    def logger
-      defined?(Rails.logger) ? Rails.logger : nil
     end
   end
 end
