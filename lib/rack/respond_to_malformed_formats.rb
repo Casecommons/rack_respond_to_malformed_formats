@@ -5,7 +5,7 @@ require "yaml"
 
 module Rack
   class RespondToMalformedFormats
-    VERSION = "0.0.2"
+    VERSION = "0.0.4"
 
     def initialize(app, options = {})
       @app = app
