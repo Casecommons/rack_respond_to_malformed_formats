@@ -41,6 +41,7 @@ module Rack
     end
 
     def parse_json(body)
+      return false if body.nil? || body.to_s.empty?
       JSON.parse(body)
       false
     rescue JSON::ParserError => e

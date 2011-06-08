@@ -45,6 +45,32 @@ describe Rack::RespondToMalformedFormats do
       end
     end
 
+    context "and it is nil" do
+      it "should not break" do
+        test_input = nil
+        app = lambda { |env| [200, {"Content-Type" => "application/json"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/json", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/json"
+        read(response.last).should == 'Got: '
+      end
+    end
+
+    context "and it is blank" do
+      it "should not break" do
+        test_input = ''
+        app = lambda { |env| [200, {"Content-Type" => "application/json"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/json", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/json"
+        read(response.last).should == 'Got: '
+      end
+    end
+
     context "and it is invalid" do
       it "should return a 400 with a message" do
         test_input = '{"foo":'
@@ -71,6 +97,32 @@ describe Rack::RespondToMalformedFormats do
       end
     end
 
+    context "and it is nil" do
+      it "should not break" do
+        test_input = nil
+        app = lambda { |env| [200, {"Content-Type" => "application/xml"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/json", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/xml"
+        read(response.last).should == 'Got: '
+      end
+    end
+
+    context "and it is blank" do
+      it "should not break" do
+        test_input = ''
+        app = lambda { |env| [200, {"Content-Type" => "application/xml"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/xml", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/xml"
+        read(response.last).should == 'Got: '
+      end
+    end
+
     context "and it is invalid" do
       it "should return a 400 with a message" do
         test_input = '<ml><foo>bar'
@@ -94,6 +146,32 @@ describe Rack::RespondToMalformedFormats do
         body = wrapped_app(app).call(request).last
 
         read(body).should == "Got: --- \nfoo: bar\n"
+      end
+    end
+
+    context "and it is nil" do
+      it "should not break" do
+        test_input = nil
+        app = lambda { |env| [200, {"Content-Type" => "application/yaml"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/json", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/yaml"
+        read(response.last).should == 'Got: '
+      end
+    end
+
+    context "and it is blank" do
+      it "should not break" do
+        test_input = ''
+        app = lambda { |env| [200, {"Content-Type" => "application/yaml"}, response_for_env(env)] }
+        request = Rack::MockRequest.env_for("/", :params => "", "CONTENT_TYPE" => "application/yaml", :input => test_input)
+        response = wrapped_app(app).call(request)
+
+        response[0].should == 200
+        response[1]["Content-Type"].should == "application/yaml"
+        read(response.last).should == 'Got: '
       end
     end
 
